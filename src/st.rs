@@ -1,0 +1,46 @@
+use std::fmt::Display;
+
+#[derive(PartialEq, Copy, Clone)]
+pub enum SyntaxKind {
+    Number, WhiteSpace, Plus, Times, Minus, Modulo, Divide, OpenParenthesis, CloseParenthesis, BadToken, FileEnd
+}
+impl Display for SyntaxKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let out = match self {
+            Self::Number => "NUMBER",
+            Self::WhiteSpace => "<WhiteSpace>",
+            Self::Plus => "PLUS",
+            Self::Times => "Times",
+            Self::Minus => "Minus",
+            Self::Modulo => "Modulo",
+            Self::Divide => "Divide",
+            Self::OpenParenthesis => "OpenParenthesis",
+            Self::CloseParenthesis => "CloseParenthesis",
+            Self::BadToken => "BadToken",
+            Self::FileEnd => "FileEnd",
+        };
+        write!(f, "{}", out )
+    }
+}
+#[derive(Clone)]
+pub struct SyntaxToken {
+    kind: SyntaxKind,
+    pos: usize,
+    text: String,
+}
+impl SyntaxToken {
+    pub fn new(kind: SyntaxKind, pos: usize, text: &str) -> Self {
+        Self {
+            kind, pos, text: text.to_string(),
+        }
+    }
+    pub fn kind(&self) -> SyntaxKind {
+        self.kind
+    }
+    pub fn pos(&self) -> usize {
+        self.pos
+    }
+    pub fn text(&self) -> &str {
+        self.text.as_str()
+    }
+}
