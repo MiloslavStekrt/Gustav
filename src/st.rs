@@ -2,7 +2,8 @@ use std::fmt::Display;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum SyntaxKind {
-    Number, WhiteSpace, Plus, Times, Minus, Modulo, Divide, OpenParenthesis, CloseParenthesis, BadToken, FileEnd
+    Number, WhiteSpace, Plus, Times, Minus, Modulo, Divide, OpenParenthesis, CloseParenthesis, BadToken, FileEnd, 
+    BinnaryE,
 }
 impl Display for SyntaxKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -18,6 +19,7 @@ impl Display for SyntaxKind {
             Self::CloseParenthesis => "CloseParenthesis",
             Self::BadToken => "BadToken",
             Self::FileEnd => "FileEnd",
+            Self::BinnaryE => "BinnaryE",
         };
         write!(f, "{}", out )
     }

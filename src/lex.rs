@@ -68,6 +68,6 @@ impl Lexer {
             return SyntaxToken::new(SyntaxKind::CloseParenthesis, self.pos+1, ")");
         }
 
-        return SyntaxToken::new(SyntaxKind::BadToken, self.pos-1, &self.text[self.pos-1..self.pos-1]);
+        return SyntaxToken::new(SyntaxKind::BadToken, self.pos-1, &self.text[self.pos-1..self.pos]);
     }
 }

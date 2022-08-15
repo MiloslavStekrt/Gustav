@@ -4,24 +4,35 @@ use st::{SyntaxToken, SyntaxKind};
 mod st;
 mod lex;
 mod par;
+mod sn;
+mod esyntax;
+mod Math;
 
 fn main() {
     run();
     println!("Hello, world!");
 }
+fn input() -> String {
+    let mut s = String::new();
+    print!("> ");
+    let _ = stdout().flush();
+    stdin().read_line(&mut s).expect("Didn't enter correct string");
+    s
+}
+fn remove_last(s: String) -> String {
+    let mut returner = s;
+    let last: Option<char> = returner.chars().next_back();
+    if let Some('\n') = last {
+        returner.pop();
+    }
+    if let Some('\r') =  last {
+        returner.pop();
+    }
+    returner.to_string()
+}
 fn run() {
     loop {
-        let mut s = String::new();
-        print!("> ");
-        let _ = stdout().flush();
-        stdin().read_line(&mut s).expect("Didn't enter correct string");
-        let last: Option<char> = s.chars().next_back();
-        if let Some('\n') = last {
-            s.pop();
-        }
-        if let Some('\r') =  last {
-            s.pop();
-        }
+        let s = remove_last(input());
 
         let mut lexer = lex::Lexer::new(&s);
         loop {
@@ -31,6 +42,8 @@ fn run() {
             }
             println!("{}: '{}'", token.kind(), token.text());
         }
+        let mut parser = par::Parser::new(&s);
+        parser.compute();
 
         println!("You typed: {}", s);
     }
