@@ -1,7 +1,7 @@
 use crate::lex::Lexer;
 use crate::st::{SyntaxKind, SyntaxToken};
 use crate::Math;
-use crate::esyntax::{BinnaryES, ExpressionSyntax};
+use crate::esyntax::{BinnaryES, ES, NumberES};
 
 #[derive(Clone)]
 pub struct Parser {
@@ -26,7 +26,7 @@ impl Parser {
         Self { tokens, pos: 0 }
     }
     pub fn current(&self) -> SyntaxToken {
-        self.tokens[self.pos]
+        self.tokens[self.pos].clone()
     }
     pub fn peek(&self, offset: isize) -> SyntaxToken {
         let index =  (self.pos as isize + offset) as usize;
@@ -66,23 +66,27 @@ impl Parser {
         }
         return false;
     }
-    pub fn is_it(&self, kind: &SyntaxKind) -> SyntaxToken {
+    pub fn is_it(&mut self, kind: &SyntaxKind) -> SyntaxToken {
         let curr = self.current();
         if &curr.kind() == kind {
             return self.next()
         }
-        return SyntaxToken::new(*kind, curr.pos(), "");
+        return SyntaxToken::new(kind.clone(), curr.pos(), "");
     }
-    pub fn parser(&self) {
-        let curr = self.current();
-        let mut left = ParsePrimaryE();
+    pub fn parse_primary_e(&mut self) -> Option<Box<dyn ES>> {
+        let number = self.is_it(&SyntaxKind::Number);
+        return Some(Box::new(NumberES::new(number)));
+    }
+    pub fn parse(&mut self) -> Option<Box<dyn ES>> {
+        let mut curr = self.current();
+        let mut left = self.parse_primary_e();
         while self.is_aritmetic(&curr.kind()) {
             let operator = self.next();
-            let right = ParsePrimaryE();
-            left = Box::new(BinnaryES::new(left, operator, right));
+            let right = self.parse_primary_e();
+            left = Some(Box::new(BinnaryES::new(left, operator, right)));
+            curr = self.current();
         }
-    }
-    pub fn ParsePrimaryE() -> Box<dyn ExpressionSyntax> {
+        return left;
     }
     pub fn compute(&mut self) {
         while self.pos <= self.tokens.len() {

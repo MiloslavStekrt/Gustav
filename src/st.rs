@@ -24,6 +24,24 @@ impl Display for SyntaxKind {
         write!(f, "{}", out )
     }
 }
+impl From<String> for SyntaxKind {
+    fn from(text: String) -> Self {
+        match text.to_lowercase().as_str() {
+            "number" => Self::Number,
+            " " => Self::WhiteSpace,
+            "+" => Self::Plus,
+            "*" => Self::Times,
+            "-" => Self::Minus,
+            "%" => Self::Modulo,
+            "/" => Self::Divide,
+            "(" => Self::OpenParenthesis,
+            ")" => Self::CloseParenthesis,
+            "\n" => Self::FileEnd,
+            "Binnary" => Self::BinnaryE,
+            _ => Self::BadToken,
+        }
+    }
+}
 #[derive(Clone)]
 pub struct SyntaxToken {
     kind: SyntaxKind,

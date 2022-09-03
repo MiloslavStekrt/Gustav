@@ -1,37 +1,49 @@
 use crate::st::{SyntaxKind, SyntaxToken};
 
 
-pub trait ExpressionSyntax {
+pub trait ES {
+    fn kind(&self) -> SyntaxKind;
 }
 
-// Binnary ExpressionSyntax
+impl ES for BinnaryES {
+    fn kind(&self) -> SyntaxKind {self.kind}
+}
+impl ES for NumberES {
+    fn kind(&self) -> SyntaxKind {self.kind}
+}
+
+
+// Binnary ES
 pub struct BinnaryES {
     kind: SyntaxKind,
-    left: Box<dyn ExpressionSyntax>,
-    operator: Box<dyn ExpressionSyntax>,
-    right: Box<dyn ExpressionSyntax>,
+    left: Option<Box<dyn ES>>,
+    operator: SyntaxToken,
+    right: Option<Box<dyn ES>>,
 }
 
-impl ExpressionSyntax for BinnaryES { }
 impl BinnaryES {
-    pub fn new(left: Box<dyn ExpressionSyntax>, operator: Box<dyn ExpressionSyntax>, right: Box<dyn ExpressionSyntax>) -> Self {
+    pub fn new(
+        // operator => SyntaxKind
+        // left => NumberES | BinnaryES 
+        // right => NumberES | BinnaryES 
+        left: Option<Box<dyn ES>>, operator: SyntaxToken, right: Option<Box<dyn ES>>) -> Self {
         Self { left, operator, right, kind: SyntaxKind::BinnaryE }
     }
+    pub fn get_child(&self) -> (&Option<Box<dyn ES>>, SyntaxToken, &Option<Box<dyn ES>>) {
+        return (&self.left, self.operator.clone(), &self.right);
+    }
     // Getters? 
-    pub fn left(self) -> Box<dyn ExpressionSyntax> {self.left}
-    pub fn operator(self) -> Box<dyn ExpressionSyntax> {self.operator}
-    pub fn right(self) -> Box<dyn ExpressionSyntax> {self.right}
-    fn kind(self) -> SyntaxKind {self.kind}
+    pub fn left(&self) -> &Option<Box<dyn ES>> {&self.left}
+    pub fn operator(&self) -> &SyntaxToken {&self.operator}
+    pub fn right(&self) -> &Option<Box<dyn ES>> {&self.right}
 }
 
 
-// Number ExpressionSyntax
+// Number ES
+#[derive(Clone)]
 pub struct NumberES {
     kind: SyntaxKind,
     val: isize,
-}
-
-impl ExpressionSyntax for NumberES {
 }
 
 impl NumberES {
@@ -41,6 +53,8 @@ impl NumberES {
             val: number.text().parse::<isize>().unwrap(),
         }
     }
+    pub fn get_child(&self) -> SyntaxKind {
+        return self.kind;
+    }
     pub fn val(&self) -> isize { self.val }
-    fn kind(&self) -> SyntaxKind { self.kind }
 }

@@ -1,5 +1,7 @@
 use std::io::{stdin, stdout, Write};
 use st::{SyntaxToken, SyntaxKind};
+use esyntax::ES;
+use par::Parser;
 
 mod st;
 mod lex;
@@ -30,9 +32,23 @@ fn remove_last(s: String) -> String {
     }
     returner.to_string()
 }
+fn pretty_print(node: &Option<Box<dyn ES>>, indent: &str) {
+    if node.is_none() {return;}
+    println!("{}", node.as_ref().unwrap().kind());
+
+    if node.as_ref().unwrap().kind().clone().eq(&SyntaxKind::Number) {
+
+    }
+}
 fn run() {
     loop {
         let s = remove_last(input());
+
+
+        let mut parser = Parser::new(&s);
+        let expression = parser.parse();
+
+        pretty_print(&Some(Box::new(expression)), "");
 
         let mut lexer = lex::Lexer::new(&s);
         loop {
